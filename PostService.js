@@ -1,28 +1,35 @@
 import Post from "./Post.js";
-
+import fileService from "./fileService.js";
 class PostService {
     async create(post, picture) {
-            const newPost = await Post.create(post);
+        if(picture) {
+            const fileName = fileService.saveFile(picture);
+            const newPost = await Post.create({...post, picture: fileName});
             return newPost;
+        }
+        const newPost = await Post.create(post);
+        return newPost;
     }
     async getAll(req, res) {
-            const posts = await Post.find();
-            return posts;
+        const posts = await Post.find();
+        return posts;
     }
     async getOne(id) {
-            if(!id) throw new Error("Post not found");
-            const post = await Post.findById(id);
-            return post;
+        if (!id) throw new Error("Post not found");
+        const post = await Post.findById(id);
+        return post;
     }
     async update(post) {
-            if(!post._id) throw new Error("Post not found");
-            const updatedPost = await Post.findByIdAndUpdate(post._id, post, {new: true});
-            return updatedPost;
+        if (!post._id) throw new Error("Post not found");
+        const updatedPost = await Post.findByIdAndUpdate(post._id, post, {
+            new: true
+        });
+        return updatedPost;
     }
     async delete(id) {
-            if(!id) throw new Error("Post not found");
-            const post = await Post.findByIdAndDelete(id);
-            return post;
+        if (!id) throw new Error("Post not found");
+        const post = await Post.findByIdAndDelete(id);
+        return post;
     }
 }
 
